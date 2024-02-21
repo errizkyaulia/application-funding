@@ -102,16 +102,10 @@
             <div class="container">
                 <a href="Bendahara.php">Bendahara</a>
             </div>
-            <div class="container">
-                <a href=".php">List SP2D</a>
-            </div>
         </div>
         <div class="menu">
             <div class="container">
                 <a href="Admin-Register.php">Daftar Admin</a>
-            </div>
-            <div class="container">
-                <a href="Admin-Page.php">Home</a>
             </div>
             <div class="container">
                 <a href="../Logout.php">Logout</a>

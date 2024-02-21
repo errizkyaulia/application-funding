@@ -298,7 +298,7 @@
                     $stmtStatusUpdate->bind_param("i", $TransaksiID);
                     $stmtStatusUpdate->execute();
                     $stmtStatusUpdate->close();
-                    // Redirect to SPM.php with a success parameter
+
                     // Redirect to SPM.php with a success parameter
                     echo '<script>window.location.href = "SPM.php?TransactionID=' . $TransaksiID . '&success=1";</script>';
                     exit();

@@ -164,7 +164,7 @@
             <input type="text" name="bidang" value="<?php echo $bidang; ?>"><br>
 
             <label for="profilePicture">Profile Picture:</label>
-            <input type="file" name="profilePicture">
+            <input type="file" name="profilePicture" accept="image/*">
 
             <img src="<?php echo $imageSrc; ?>" alt="Profile Picture">
             <input type="submit" value="Save">
