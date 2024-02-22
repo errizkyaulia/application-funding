@@ -44,12 +44,32 @@
             background-color: #45a049;
         }
 
+        .proceed-button {
+        display: inline-block;
+        padding: 8px 12px;
+        background-color: #4CAF50;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        font-size: 14px;
+        cursor: pointer;
+        border-radius: 4px;
+        }
+
+        .container {
+            background-color: #f4f4f4;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+        }
+
         table {
-            margin-top: 20px;
+            margin: 20px; /* Add space around the table */
             border-collapse: collapse;
-            width: 80%;
-            margin-left: auto;
-            margin-right: auto;
+            width: calc(100% - 40px); /* Subtract twice the margin value from 100% width */
+            display: table;
         }
 
         th, td {
@@ -105,6 +125,21 @@
             text-decoration: underline;
         }
     </style>
+
+    <!-- Include jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <script>
+    $(document).ready(function() {
+        // Get the maximum width among all tables
+        var maxWidth = Math.max.apply(null, $("table").map(function() {
+        return $(this).outerWidth();
+        }).get());
+
+        // Set the container width to the maximum table width
+        $(".container").width(maxWidth);
+    });
+    </script>
     <?php
     require_once 'connection-Admin.php';
     require_once "authenticate-Admin.php";
@@ -116,68 +151,7 @@
         exit(); // Add this line to stop further execution if unauthorized
     }
 
-    // Retrieve transactionID from the URL
-    if (isset($_GET['TransactionID'])) {
-        $selectedTransactionID = $_GET['TransactionID'];
-        // Fetch combined data from both tables using a JOIN query
-        $query = "SELECT t.TransaksiID, t.userid, t.TanggalPengajuan, t.NomorStJenisKeg, t.catatan, t.status, u.fullName, u.email, u.phoneNumber, u.bidang, u.PIC 
-        FROM transaksi t
-        JOIN userdata u ON t.userid = u.UserID
-        WHERE t.TransaksiID = ?";
-        $stmt = $con->prepare($query);
-        $stmt->bind_param("i", $selectedTransactionID);
-        $stmt->execute();
-        $stmt->bind_result($TransaksiID, $userId, $TanggalPengajuan, $NomorStJenisKeg, $catatan, $status, $fullName, $email, $phoneNumber, $bidang, $PIC);
-
-        // Display the transaction data in a table
-        echo '<table border="1">
-        <tr>
-            <th>Transaction ID</th>
-            <th>PIC</th>
-            <th>Full Name</th>
-            <th>Email</th>
-            <th>Phone Number</th>
-            <th>Bidang</th>
-            <th>Tanggal Pengajuan</th>
-            <th>Nomor ST / Jenis Kegunaan</th>
-            <th>Catatan</th>
-            <th>Status</th>
-        </tr>';
-    } else {
-        // Redirect to the transaction list page if the transactionID is not provided
-        echo '<script>alert("Error: TransactionID not provided! Please return to the page to Select the Transaction");</script>';
-        echo '<script>window.location.href = "Transaction-List.php";</script>';
-    }
-
-    ?>
-</head>
-<body>
-    <div class="Transaction-List">
-    <?php
-        // Display the information
-        if ($stmt->fetch()) {
-            echo '<h1>Ini adalah Pengajuan Atas nama '. $fullName .'</h1>';
-            // Display combined data in the table
-            echo '<tr>
-            <td>' . $TransaksiID . '</td>
-            <td><img src="data:image/jpeg;base64,' . base64_encode($PIC) . '" alt="Profile Picture" width="50" height="50"></td>
-            <td>' . $fullName . '</td>
-            <td>' . $email . '</td>
-            <td>' . $phoneNumber . '</td>
-            <td>' . $bidang . '</td>
-            <td>' . $TanggalPengajuan . '</td>
-            <td>' . $NomorStJenisKeg . '</td>
-            <td>' . $catatan . '</td>
-            <td>' . $status . '</td>
-            </tr>';
-            echo '</table>';
-        } else {
-            echo '<p>Error: Transaction not found</p>';
-        }
-        $stmt->close();
-    ?>
-    </div>
-    <?php
+    // Check if the form is submitted
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Check if the form is submitted
         if (isset($_POST['update'])) {
@@ -240,60 +214,188 @@
         }
     }
     ?>
-    <div class="form-container">
+</head>
+<body>
     <?php
-    // Fetch data from the 'pembebanan' table
-    $queryPembebanan = "SELECT PembebananID, Bisma, SumberDana, Akun, Detail, Anggaran, Realisasi, TotalRealisasi, Saldo, TanggalSelesaiPembebanan FROM pembebanan WHERE TransaksiID = ?";
-    $stmtPembebanan = $con->prepare($queryPembebanan);
-    $stmtPembebanan->bind_param("i", $TransaksiID);
-    $stmtPembebanan->execute();
-    $stmtPembebanan->bind_result($PembebananID, $Bisma, $SumberDana, $Akun, $Detail, $Anggaran, $Realisasi, $TotalRealisasi, $Saldo, $TanggalSelesaiPembebanan);
-    $stmtPembebanan->fetch();
-    // Display data from the 'pembebanan' table in a vertical table
-    echo '<form method="post" action="">';
+    // Retrieve transactionID from the URL
+    if (isset($_GET['TransactionID'])) {
+        $selectedTransactionID = $_GET['TransactionID'];
+        // Fetch combined data from both tables using a JOIN query
+        $query = "SELECT t.TransaksiID, t.userid, t.TanggalPengajuan, t.NomorStJenisKeg, t.catatan, t.status, u.fullName, u.email, u.phoneNumber, u.bidang, u.PIC 
+        FROM transaksi t
+        JOIN userdata u ON t.userid = u.UserID
+        WHERE t.TransaksiID = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("i", $selectedTransactionID);
+        $stmt->execute();
+        $stmt->bind_result($TransaksiID, $userId, $TanggalPengajuan, $NomorStJenisKeg, $catatan, $status, $fullName, $email, $phoneNumber, $bidang, $PIC);
 
-    echo '<table border="1">
-            <tr>
-                <th>Field</th>
-                <th>Value</th>
+        echo '<div class="Transaction-List">';
+        // Display the transaction data in a table
+        echo '<table border="1">
+        <tr>
+            <th>Transaction ID</th>
+            <th>PIC</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Bidang</th>
+            <th>Tanggal Pengajuan</th>
+            <th>Nomor ST / Jenis Kegunaan</th>
+            <th>Catatan</th>
+            <th>Status</th>
+        </tr>';
+
+        // Display the information
+        if ($stmt->fetch()) {
+            echo '<h1>Ini adalah Pengajuan Atas nama '. $fullName .'</h1>';
+            // Display combined data in the table
+            echo '<tr>
+            <td>' . $TransaksiID . '</td>
+            <td><img src="data:image/jpeg;base64,' . base64_encode($PIC) . '" alt="Profile Picture" width="50" height="50"></td>
+            <td>' . $fullName . '</td>
+            <td>' . $email . '</td>
+            <td>' . $phoneNumber . '</td>
+            <td>' . $bidang . '</td>
+            <td>' . $TanggalPengajuan . '</td>
+            <td>' . $NomorStJenisKeg . '</td>
+            <td>' . $catatan . '</td>
+            <td>' . $status . '</td>
             </tr>';
-
-    // Associative array to map field names to their corresponding values
-    $data = array(
-        'PembebananID' => $PembebananID,
-        'Bisma' => $Bisma,
-        'Sumber Dana' => $SumberDana,
-        'Akun' => $Akun,
-        'Detail' => $Detail,
-        'Anggaran' => $Anggaran,
-        'Realisasi' => $Realisasi,
-        'Total Realisasi' => $TotalRealisasi,
-        'Saldo' => $Saldo,
-        'Tanggal Selesai Pembebanan' => $TanggalSelesaiPembebanan
-    );
-
-    foreach ($data as $field => $value) {
-        // Use datetime-local input for specific fields
-        if ($field == 'Tanggal Selesai Pembebanan') {
-            echo '<tr>
-                    <td>' . $field . '</td>
-                    <td><input type="datetime-local" name="' . str_replace(' ', '', $field) . '" value="' . date('Y-m-d\TH:i', strtotime($value)) . '"></td>
-                </tr>';
+            echo '</table>';
         } else {
-            echo '<tr>
-                    <td>' . $field . '</td>
-                    <td><input type="text" name="' . str_replace(' ', '', $field) . '" value="' . $value . '"></td>
-                </tr>';
+            echo '<p>Error: Transaction not found</p>';
         }
+        $stmt->close();
+        echo '</div>';
+
+        echo '<div class="form-container">';
+        // Fetch data from the 'pembebanan' table
+        $queryPembebanan = "SELECT PembebananID, Bisma, SumberDana, Akun, Detail, Anggaran, Realisasi, TotalRealisasi, Saldo, TanggalSelesaiPembebanan FROM pembebanan WHERE TransaksiID = ?";
+        $stmtPembebanan = $con->prepare($queryPembebanan);
+        $stmtPembebanan->bind_param("i", $TransaksiID);
+        $stmtPembebanan->execute();
+        $stmtPembebanan->bind_result($PembebananID, $Bisma, $SumberDana, $Akun, $Detail, $Anggaran, $Realisasi, $TotalRealisasi, $Saldo, $TanggalSelesaiPembebanan);
+        $stmtPembebanan->fetch();
+        // Display data from the 'pembebanan' table in a vertical table
+        echo '<form method="post" action="">';
+
+        echo '<table border="1">
+                <tr>
+                    <th>Field</th>
+                    <th>Value</th>
+                </tr>';
+
+        // Associative array to map field names to their corresponding values
+        $data = array(
+            'PembebananID' => $PembebananID,
+            'Bisma' => $Bisma,
+            'Sumber Dana' => $SumberDana,
+            'Akun' => $Akun,
+            'Detail' => $Detail,
+            'Anggaran' => $Anggaran,
+            'Realisasi' => $Realisasi,
+            'Total Realisasi' => $TotalRealisasi,
+            'Saldo' => $Saldo,
+            'Tanggal Selesai Pembebanan' => $TanggalSelesaiPembebanan
+        );
+
+        foreach ($data as $field => $value) {
+            // Use datetime-local input for specific fields
+            if ($field == 'Tanggal Selesai Pembebanan') {
+                echo '<tr>
+                        <td>' . $field . '</td>
+                        <td><input type="datetime-local" name="' . str_replace(' ', '', $field) . '" value="' . date('Y-m-d\TH:i', strtotime($value)) . '"></td>
+                    </tr>';
+            } else {
+                echo '<tr>
+                        <td>' . $field . '</td>
+                        <td><input type="text" name="' . str_replace(' ', '', $field) . '" value="' . $value . '"></td>
+                    </tr>';
+            }
+        }
+        echo '</table>';
+        echo '<input type="submit" name="update" value="Update">';
+        echo '</form>';
+        $stmtPembebanan->close();
+        echo '</div>';
+
+        echo '<div class="Back-Home">
+                <p>Back to <a href="Mapping-Anggaran.php" class="Back-button">List</a></p>
+            </div>';
+    } else {
+        // Display the search form
+        echo '<div class="container">';
+        echo '<h1>Kolom Pencarian</h1>';
+        echo '<form method="" action="" onsubmit="window.location.href = \'SPM.php?TransactionID=\' + encodeURIComponent(document.getElementById(\'TransaksiID\').value); return false;">
+            <label for="TransaksiID">Search by Transaksi ID:</label>
+            <input type="text" name="TransaksiID" id="TransaksiID">
+            <button type="submit">Search</button>
+        </form>';
+        echo '</div>';
+
+        echo '<div class="container">';
+        echo '<div class="Transaction-Data">
+        <h2>Here is All of Yours Transaction Data</h2>';
+        $sts = "diajukan";
+        // Fetch combined data from both tables using a JOIN query
+        $query = "SELECT t.TransaksiID, t.userid, t.TanggalPengajuan, t.NomorStJenisKeg, t.catatan, t.status, u.fullName, u.email, u.phoneNumber, u.bidang, u.PIC 
+                FROM transaksi t
+                JOIN userdata u ON t.userid = u.UserID
+                WHERE t.status = ?";
+        
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("s", $sts);
+        $stmt->execute();
+        $stmt->bind_result($TransaksiID, $userId, $TanggalPengajuan, $NomorStJenisKeg, $catatan, $status, $fullName, $email, $phoneNumber, $bidang, $PIC);
+
+        // Display the transaction data in a table
+        echo '<table border="1">
+                <tr>
+                    <th>No</th>
+                    <th>Transaction ID</th>
+                    <th>PIC</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Bidang</th>
+                    <th>Tanggal Pengajuan</th>
+                    <th>Nomor ST / Jenis Kegunaan</th>
+                    <th>Catatan</th>
+                    <th>Status</th>
+                    <th>Action</th> <!-- New column for buttons -->
+                </tr>';
+
+        // Fetch and display each row of data
+        $count = 1;
+        while ($stmt->fetch()) {
+            // Display combined data in the table
+            echo '<tr>
+                    <td>' . $count . '</td>
+                    <td>' . $TransaksiID . '</td>
+                    <td><img src="data:image/jpeg;base64,' . base64_encode($PIC) . '" alt="Profile Picture" width="50" height="50"></td>
+                    <td>' . $fullName . '</td>
+                    <td>' . $email . '</td>
+                    <td>' . $phoneNumber . '</td>
+                    <td>' . $bidang . '</td>
+                    <td>' . $TanggalPengajuan . '</td>
+                    <td>' . $NomorStJenisKeg . '</td>
+                    <td>' . $catatan . '</td>
+                    <td>' . $status . '</td>
+                    <td><a class="proceed-button" href="Mapping-Anggaran.php?TransactionID=' . $TransaksiID . '">Pilih</a></td> <!-- Styled link for each row -->
+                </tr>';
+            $count++;
+        }
+
+        echo '</table>';
+        $stmt->close();
+        echo '</div>';
+        echo '</div>';
+
+        echo '<div class="Back-Home">
+            <p>Back to <a href="Admin-Page.php" class="Back-button">Admin Page</a></p>
+        </div>';
     }
-    echo '</table>';
-    echo '<input type="submit" name="update" value="Update">';
-    echo '</form>';
-    $stmtPembebanan->close();
     ?>
-    </div>
-    <div class="Back-Home">
-        <p>Back to <a href="Transaction-List.php" class="Back-button">Transaction List</a></p>
-    </div>
 </body>
 </html>

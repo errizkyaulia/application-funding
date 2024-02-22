@@ -76,24 +76,15 @@
     <div class="menu-container">
         <div class="menu">
             <div class="container">
-                <a href="Transaction-List.php">Daftar Pengajuan</a>
-            </div>
-            <div class="container">
                 <a href="Mapping-Anggaran.php">Mapping Anggaran</a>
             </div>
         </div>
         <div class="menu">
             <div class="container">
-                <a href="List-Anggaran.php">Daftar Anggaran</a>
-            </div>
-            <div class="container">
                 <a href="Verifikatur.php">Verifikatur</a>
             </div>
         </div>
         <div class="menu">
-            <div class="container">
-                <a href="List-SPM.php">List SPM</a>
-            </div>
             <div class="container">
                 <a href="SPM.php">SPM</a>
             </div>

@@ -127,10 +127,11 @@
             }
             ?>
         </div>
-
+        <div class= "container">
         <div class="signup">
             <p>Don't have an account? <a href="SignUp.php" class="signup-button">Sign up</a></p>
         </div>
+    </div>
 	</div>
 </body>
 </html>

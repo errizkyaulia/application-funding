@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Surat Perintah Membayar</title>
+    <title>Bendahara</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,6 +16,23 @@
             text-align: center;
             color: #333;
         }
+
+        .container {
+            background-color: #f4f4f4;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+        }
+
+        table {
+            margin: 20px; /* Add space around the table */
+            border-collapse: collapse;
+            width: calc(100% - 40px); /* Subtract twice the margin value from 100% width */
+            display: table;
+        }
+
 
         form {
             text-align: center;
@@ -42,14 +59,6 @@
 
         button:hover {
             background-color: #45a049;
-        }
-
-        table {
-            margin-top: 20px;
-            border-collapse: collapse;
-            width: 80%;
-            margin-left: auto;
-            margin-right: auto;
         }
 
         th, td {
@@ -99,6 +108,21 @@
             text-decoration: underline;
         }
     </style>
+
+    <!-- Include jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <script>
+    $(document).ready(function() {
+        // Get the maximum width among all tables
+        var maxWidth = Math.max.apply(null, $("table").map(function() {
+        return $(this).outerWidth();
+        }).get());
+
+        // Set the container width to the maximum table width
+        $(".container").width(maxWidth);
+    });
+    </script>
     <?php
     require_once 'connection-Admin.php';
     require_once "authenticate-Admin.php";
@@ -214,13 +238,14 @@
 
         // Display the information
         if ($stmt->fetch()) {
-            echo '<h1>Ini adalah Data Pengajuan Atas Nama '. $fullName .'</h1>';
+            echo '<div class="container">';
+            echo '<h1>Data Pengajuan Atas Nama '. $fullName .'</h1>';
             echo '<h2>Dengan Nomor SPM: '. $NomorSPM .'</h2>';
 
             echo '<table border="1">
             <tr>
                 <th>Keterangan Pengajuan</th>
-                <th>Tanggal SPM</th>
+                <th>Tanggal Keluar SPM</th>
             </tr>';
             echo '<tr>
                 <td>' . $KetPengajuan . '</td>
@@ -251,8 +276,10 @@
             <td>' . $status . '</td>
             </tr>';
             echo '</table>';
+            echo '</div>';
 
             // Display the transaction data in a table
+            echo '<div class="container">';
             echo '<h2>Data Anggaran</h2>';
             echo '<table border="1">
             <tr>
@@ -276,7 +303,10 @@
                     <td>' . $Saldo . '</td>
                   </tr>';
             echo '</table>';
+            echo '</div>';
 
+            // verification data
+            echo '<div class="container">';
             echo '<h2>Diverifikasi Oleh: '. $AdminName .'</h2>';
             echo '<table border="1">
                 <tr>
@@ -292,10 +322,8 @@
                     <td>' . $UpdateStatusSPJ . '</td>
                 </tr>';
             echo '</table>';
-        } else{
-            echo '<p>Error: Transaction not found</p>';
-        }
-        $stmt->close();
+            echo '</div>';
+            $stmt->close();
 
         // Check if the data is already there
         $queryBen = "SELECT CatatanBendahara, TanggalBayarBendahara, PICSelesaiTransfer FROM bendahara Where TransaksiID = ?";
@@ -315,6 +343,8 @@
         }
 
         // Bendahara FORM
+        echo '<div class="container">';
+        echo '<h2>Form Bendahara</h2>';
         echo '<form method="POST" action="" enctype="multipart/form-data">
         <table>
             <tr>
@@ -341,22 +371,27 @@
         </div>
         <button type="update">Update</button>
         </form>';
-
+        echo '</div>';
+        } else{
+            echo '<p>Error: Transaction not found</p>';
+        }
         // Display the back button
         echo '<div class="Back-Home">
                 <p>Back to <a href="Bendahara.php" class="Back-button">List</a></p>
             </div>';
     } else {
         // Display the search form
-        echo '<h1>Daftar Surat Perintah Membayar</h1>
-        <form method="" action="" onsubmit="window.location.href = \'Bendahara.php?TransactionID=\' + encodeURIComponent(document.getElementById(\'TransaksiID\').value); return false;">
+        echo '<div class="container">';
+        echo '<h1>Kolom Pencarian</h1>';
+        echo '<form method="" action="" onsubmit="window.location.href = \'Bendahara.php?TransactionID=\' + encodeURIComponent(document.getElementById(\'TransaksiID\').value); return false;">
             <label for="TransaksiID">Search by Transaksi ID:</label>
             <input type="text" name="TransaksiID" id="TransaksiID">
             <button type="submit">Search</button>
         </form>';
+        echo '<p>*Only Transaction with SPM Number can be searched</p>';
+        echo '</div>';
         // Display all transaction data
         echo '<div class="Transaction-Data">';
-        echo '<h2>Here is All of Yours Transaction Data</h2>';
         // Define the status of the transaction
         $sts = "SPM sudah diterbitkan";
         // Fetch combined data from both tables using a JOIN query
@@ -372,7 +407,9 @@
         $stmt->bind_result($TransaksiID, $userId, $TanggalPengajuan, $NomorStJenisKeg, $PembebananID, $Bisma, $SumberDana, $Anggaran, $TotalRealisasi, $Saldo, $catatan, $status, $fullName, $bidang, $PIC);
 
         // Display the transaction data in a table
-        echo '<table id="transactionTable" border="1">;
+        echo '<div class="container">';
+        echo '<table id="transactionTable" border="1">
+                <h1>Daftar Surat Perintah Membayar</h1>
                 <tr>
                     <th>No</th>
                     <th>Pembebanan ID</th>
@@ -416,6 +453,7 @@
         }
         echo '</table>';
         $stmt->close();
+        echo '</div>';
         echo '</div>';
         echo '<div class="Back-Home">
             <p>Back to <a href="Admin-Page.php" class="Back-button">Admin Page</a></p>
