@@ -4,130 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPM</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-
-        h1, h2, p {
-            text-align: center;
-            color: #333;
-        }
-
-        form {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        label {
-            font-weight: bold;
-        }
-
-        input[type="text"] {
-            padding: 8px;
-            margin: 5px;
-            width: 200px;
-        }
-
-        button {
-            padding: 10px;
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        .proceed-button {
-        display: inline-block;
-        padding: 8px 12px;
-        background-color: #4CAF50;
-        color: white;
-        text-align: center;
-        text-decoration: none;
-        font-size: 14px;
-        cursor: pointer;
-        border-radius: 4px;
-        }
-
-        .container {
-            background-color: #f4f4f4;
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #ccc;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
-        }
-
-        table {
-            margin: 20px; /* Add space around the table */
-            border-collapse: collapse;
-            width: calc(100% - 40px); /* Subtract twice the margin value from 100% width */
-            display: table;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #4caf50;
-            text-align: center;
-            color: white;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 8px;
-            margin: 4px 0;
-        }
-
-        input[type="submit"] {
-            padding: 10px;
-            text-align: center;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-
-        .message {
-            color: red;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .Back-Home {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .Back-button {
-            color: #4caf50;
-            text-decoration: none;
-        }
-
-        .Back-button:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <link href="styleAdmin.css" rel="stylesheet" type="text/css">
     <!-- Include jQuery library -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
     <script>
     $(document).ready(function() {
         // Get the maximum width among all tables
@@ -421,11 +300,11 @@
 
         echo '<div class="container">';
         echo '<div class="Transaction-Data">
-        <h2>Here is All of Yours Transaction Data</h2>';
+        <h2>Daftar Transaksi Yang Sudah Di Verifikasi</h2>';
         // Fetch data from the 'transaksi' and 'pembebanan' tables
         $sts = "Sudah Di Verifikasi";
         // Fetch combined data from both tables using a JOIN query
-        $query = "SELECT t.TransaksiID, t.userid, t.TanggalPengajuan, t.NomorStJenisKeg, p.Bisma, p.SumberDana, p.Anggaran, p.TotalRealisasi, p.Saldo, t.catatan, t.status, u.fullName, u.bidang, u.PIC 
+        $query = "SELECT t.TransaksiID, t.userid, t.TanggalPengajuan, t.NomorStJenisKeg, p.PembebananID, p.Bisma, p.SumberDana, p.Anggaran, p.TotalRealisasi, p.Saldo, t.catatan, t.status, u.fullName, u.bidang, u.PIC 
                   FROM transaksi t
                   JOIN userdata u ON t.userid = u.UserID
                   JOIN pembebanan p ON t.TransaksiID = p.TransaksiID
@@ -434,13 +313,13 @@
         $stmt = $con->prepare($query);
         $stmt->bind_param("s", $sts);
         $stmt->execute();
-        $stmt->bind_result($TransaksiID, $userId, $TanggalPengajuan, $NomorStJenisKeg, $Bisma, $SumberDana, $Anggaran, $TotalRealisasi, $Saldo, $catatan, $status, $fullName, $bidang, $PIC);
+        $stmt->bind_result($TransaksiID, $userId, $TanggalPengajuan, $NomorStJenisKeg, $PembebananID, $Bisma, $SumberDana, $Anggaran, $TotalRealisasi, $Saldo, $catatan, $status, $fullName, $bidang, $PIC);
     
         // Display the transaction data in a table
         echo '<table border="1">
                 <tr>
                     <th>No</th>
-                    <th>Transaction ID</th>
+                    <th>Pembebanan ID</th>
                     <th>PIC</th>
                     <th>Full Name</th>
                     <th>Bidang</th>
@@ -462,7 +341,7 @@
             // Display combined data in the table
             echo '<tr>
                     <td>' . $count . '</td>
-                    <td>' . $TransaksiID . '</td>
+                    <td>' . $PembebananID . '</td>
                     <td><img src="data:image/jpeg;base64,' . base64_encode($PIC) . '" alt="Profile Picture" width="50" height="50"></td>
                     <td>' . $fullName . '</td>
                     <td>' . $bidang . '</td>

@@ -76,15 +76,16 @@ body {
 }
 
 .signup {
+    text-align: center;
     width: 400px;
     background-color: #cccccc;
     box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3);
-    margin: 100px auto;
+    margin: 10px auto;
     padding: 20px;
     border-radius: 8px;
 }
 
-.Signup p {
+.p {
     text-align: center;
     margin-top: 20px;
     padding: 20px;
@@ -97,7 +98,7 @@ body {
     padding: 12px 24px;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
+    display: fixed;
     font-size: 16px;
     margin: 10px 0;
     cursor: pointer;
@@ -106,5 +107,6 @@ body {
 }
 
 .signup-button:hover {
+    text-align: center;
     background-color: #45a049;
 }

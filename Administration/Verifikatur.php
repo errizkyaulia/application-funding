@@ -4,119 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verifikatur</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-
-        h1, h2, p {
-            text-align: center;
-            color: #333;
-        }
-
-        form {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        label {
-            font-weight: bold;
-        }
-
-        input[type="text"] {
-            padding: 8px;
-            margin: 5px;
-            width: 200px;
-        }
-
-        button {
-            padding: 10px;
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        .proceed-button {
-        display: inline-block;
-        padding: 8px 12px;
-        background-color: #4CAF50;
-        color: white;
-        text-align: center;
-        text-decoration: none;
-        font-size: 14px;
-        cursor: pointer;
-        border-radius: 4px;
-        }
-
-        table {
-            margin-top: 20px;
-            border-collapse: collapse;
-            width: 80%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #4caf50;
-            text-align: center;
-            color: white;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 8px;
-            margin: 4px 0;
-        }
-
-        input[type="submit"] {
-            padding: 10px;
-            text-align: center;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-
-        .message {
-            color: red;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .Back-Home {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .Back-button {
-            color: #4caf50;
-            text-decoration: none;
-        }
-
-        .Back-button:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <link href="styleAdmin.css" rel="stylesheet" type="text/css">
     <?php
     require_once 'connection-Admin.php';
     require_once "authenticate-Admin.php";
@@ -197,6 +85,7 @@
         $stmt->execute();
         $stmt->bind_result($PembebananID, $TransaksiID, $userId, $TanggalPengajuan, $NomorStJenisKeg, $Bisma, $SumberDana, $Akun, $Detail, $Anggaran, $Realisasi, $TotalRealisasi, $Saldo, $catatan, $status, $fullName, $email, $phoneNumber, $bidang, $PIC);
 
+        echo '<div class="container">';
         // Display the transaction data in a table
         echo '<table border="1">
         <tr>
@@ -253,10 +142,12 @@
             echo '<p>Error: Transaction not found</p>';
         }
         $stmt->close();
+        echo '</div>';
         // Setting VerificationID
         $VerificationID = $PembebananID . '/' . $AdminID;
 
         echo '<div class="form-container">';
+        echo '<div class="container">';
         // Fetch data from the 'verification' table
         $queryVerifikator = "SELECT TanggalDiserahkan, TanggalSelesaiVerifikasi, TanggalSelesaiTTD, CatatanVerifikasi, UpdateStatusSPJ FROM verification WHERE TransaksiID = ?";
         $stmtVerifikator = $con->prepare($queryVerifikator);
@@ -313,11 +204,23 @@
         echo '</form>';
         $stmtVerifikator->close();
         echo '</div>';
+        echo '</div>';
 
         echo '<div class="Back-Home">
                 <p>Back to <a href="Verifikatur.php" class="Back-button">List</a></p>
             </div>';
     } else {
+        // Display the search form
+        echo '<div class="container">';
+        echo '<h1>Kolom Pencarian</h1>';
+        echo '<form method="" action="" onsubmit="window.location.href = \'Verifikatur.php?TransactionID=\' + encodeURIComponent(document.getElementById(\'TransaksiID\').value); return false;">
+            <label for="TransaksiID">Search by Transaksi ID:</label>
+            <input type="text" name="TransaksiID" id="TransaksiID">
+            <button type="submit">Search</button>
+        </form>';
+        echo '<p>*On develop</p>';
+        echo '</div>';
+        echo '<div class="container">';
         echo '<div class="Transaction-Data">
         <h2>Here is All of Yours Transaction Data</h2>';
         // Set the status to 'Sudah Di Anggarkan'
@@ -380,6 +283,7 @@
 
         echo '</table>';
         $stmt->close();
+        echo '</div>';
         echo '</div>';
 
         // Add a back button to return to the Admin Page

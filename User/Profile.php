@@ -4,91 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Editor</title>
-    <style>
-        h1 {
-            color: #007BFF;
-            text-align: center;
-        }
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-        }
-
-        h1 {
-            color: #007BFF;
-        }
-
-        .form-container {
-            background-color: #cccccc;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            margin: 20px auto;
-        }
-        .form-container img{
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            display: block;
-            margin: 0 auto;
-            margin-bottom: 20px;
-        }
-        
-        form {
-            max-width: 500px;
-            margin: 0 auto;
-            background-color: #e6e6e6;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        input,
-        textarea {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-        }
-
-        input[type="submit"] {
-            background-color: #007BFF;
-            color: #fff;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-
-        .Back-Home {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .Back-button {
-            text-decoration: none;
-            color: #007BFF;
-            font-weight: bold;
-        }
-
-        .Back-button:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
+    <link href="styleUser.css" rel="stylesheet" type="text/css">
     <?php
-    require_once 'connection.php';
+    require_once 'connection-User.php';
     require_once 'authenticate.php';
 
     // Fetch data from the database
@@ -146,8 +64,32 @@
         exit;
     }
     ?>
+</head>
+<body>
+    <!-- Navigation menu main goes here -->
+    <nav>
+        <ul class="nav-list">
+            <li>
+                <a href="Home.php">Home</a>
+            </li>
+            <li>
+                <a href="Pengajuan.php">Pengajuan</a>
+            </li>
+            <li>
+                <a href="Tracking.php">Lacak Pengajuan</a>
+            </li>
+            <li>
+                <a href="History.php">History</a>
+            </li>
+            <li class="active">
+                <a href="Profile.php" aria-current="page">Profile</a>
+            </li>
+            <li>
+                <a href="../Logout.php">Logout</a>
+            </li>
+        </ul>
+    </nav>
 
-    
     <div class="form-container">
         <h1>Profile Editor</h1>
         <form method="POST" action="<?php echo $_SERVER["PHP_SELF"]; ?>" enctype="multipart/form-data">

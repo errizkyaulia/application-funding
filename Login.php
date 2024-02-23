@@ -78,7 +78,7 @@
                 
                 if ($user_type === 'user') {
                     $_SESSION['user'] = $userid;
-                    header("Location: Home.php");
+                    header("Location: User/Home.php");
                 } elseif ($user_type === 'admin') {
                     $_SESSION['admin'] = $AdminID;
                     header("Location: Administration/Admin-Page.php");
@@ -127,11 +127,9 @@
             }
             ?>
         </div>
-        <div class= "container">
-        <div class="signup">
-            <p>Don't have an account? <a href="SignUp.php" class="signup-button">Sign up</a></p>
-        </div>
-    </div>
 	</div>
+    <div class="signup">
+        <p>Don't have an account? <a href="SignUp.php" class="signup-button">Sign up</a></p>    
+    </div>
 </body>
 </html>

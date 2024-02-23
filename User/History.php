@@ -4,87 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transaction History</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #cccccc;
-            margin: 0;
-            padding: 0;
-        }
-
-        h1, h2, p {
-            text-align: center;
-            color: #333;
-        }
-
-        form {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        label {
-            font-weight: bold;
-        }
-
-        input[type="text"] {
-            padding: 8px;
-            margin: 5px;
-            width: 200px;
-        }
-
-        button {
-            padding: 10px;
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        table {
-            margin-top: 20px;
-            border-collapse: collapse;
-            width: 80%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #4caf50;
-            color: white;
-        }
-
-        .message {
-            color: red;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .Back-Home {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .Back-button {
-            color: #4caf50;
-            text-decoration: none;
-        }
-
-        .Back-button:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <link href="styleUser.css" rel="stylesheet" type="text/css">
     <?php
-    require_once 'connection.php';
+    require_once 'connection-User.php';
     require_once 'authenticate.php';
     
     // Get user ID from the username
@@ -101,6 +23,29 @@
     ?>
 </head>
 <body>
+    <!-- Navigation menu main goes here -->
+    <nav>
+        <ul class="nav-list">
+            <li>
+                <a href="Home.php">Home</a>
+            </li>
+            <li>
+                <a href="Pengajuan.php">Pengajuan</a>
+            </li>
+            <li>
+                <a href="Tracking.php">Lacak Pengajuan</a>
+            </li>
+            <li class="active">
+                <a href="History.php" aria-current="page">History</a>
+            </li>
+            <li>
+                <a href="Profile.php">Profile</a>
+            </li>
+            <li>
+                <a href="../Logout.php">Logout</a>
+            </li>
+        </ul>
+    </nav>
     <h1>Transaction History <?php echo $fullName; ?></h1>
 
     <form method="POST" action="">

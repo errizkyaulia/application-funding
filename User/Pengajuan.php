@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aplikasi Pengajuan</title>
+    <link href="styleUser.css" rel="stylesheet" type="text/css">
     <?php
-        require_once 'connection.php';
+        require_once 'connection-User.php';
         require_once 'authenticate.php';
 
         // Fetch data from the database
@@ -48,8 +49,30 @@
         }
     ?>
 </head>
-<body style="background-color: #f0f0f0; font-family: 'Arial', sans-serif;">
-
+<body>
+    <!-- Navigation menu main goes here -->
+    <nav>
+        <ul class="nav-list">
+            <li>
+                <a href="Home.php">Home</a>
+            </li>
+            <li class="active">
+                <a href="Pengajuan.php" aria-current="page">Pengajuan</a>
+            </li>
+            <li>
+                <a href="Tracking.php">Lacak Pengajuan</a>
+            </li>
+            <li>
+                <a href="History.php">History</a>
+            </li>
+            <li>
+                <a href="Profile.php">Profile</a>
+            </li>
+            <li>
+                <a href="../Logout.php">Logout</a>
+            </li>
+        </ul>
+    </nav>
     <div class="form-container">
         <h2>Isi Form Dibawah ini</h2>
         <form method="POST" action="<?php echo $_SERVER["PHP_SELF"]; ?>" enctype="multipart/form-data">

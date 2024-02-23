@@ -98,6 +98,8 @@
             <div class="container">
                 <a href="Admin-Register.php">Daftar Admin</a>
             </div>
+        </div>
+        <div class="menu">
             <div class="container">
                 <a href="../Logout.php">Logout</a>
             </div>

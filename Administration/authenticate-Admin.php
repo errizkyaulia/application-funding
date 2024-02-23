@@ -9,7 +9,7 @@ if (!isset($_SESSION['admin'])) {
 // Get user ID from the username
 $AdminID = $_SESSION['admin'];
 
-//Check if the AdminLevel is allowed to access this page
+//Check if the AdminLevel is allowed to access some pages
 $queryAdminLevel = "SELECT AdminName, AdminLevel FROM admindata WHERE AdminID = ?";
 $stmtAdminLevel = $con->prepare($queryAdminLevel);
 $stmtAdminLevel->bind_param("i", $AdminID);

@@ -3,7 +3,7 @@ if (!isset($_SESSION['user'])) {
 	//Set error message
 	echo $_SESSION['error_message'] = "Please log in first to access this page";
 	// Redirect to the login page
-	header("Location: Login.php");
+	header("Location: ../Login.php");
 	exit();
 }
 
