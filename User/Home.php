@@ -117,6 +117,88 @@
                     </div>
                 </div>
             </div>
+            <div class='container'>
+                <div class='card'>
+                    <div class='card-header'>
+                        <h2>Status Pengajuan Terakhir Anda:</h2>
+                    </div>
+                    <div class='card-body'>
+                    <?php
+                        // Fetch data from the database
+                        $query = "SELECT TransaksiID, TanggalPengajuan, NomorStJenisKeg, catatan, status 
+                        FROM transaksi
+                        WHERE UserID = ?
+                        ORDER BY TanggalPengajuan DESC
+                        LIMIT 1";
+                        $stmt = $con->prepare($query);
+                        $stmt->bind_param("i", $userId);
+                        $stmt->execute();
+                        $stmt->bind_result($TransaksiID, $TanggalPengajuan, $NomorStJenisKeg, $catatan, $status);
+                        $stmt->fetch();
+                        // Display the latest transaction data
+                        if (!empty($status)) {
+                            echo "ID: " . $TransaksiID;
+                            echo '<br>';
+                            echo "Status: " . $status;
+                            $stmt->close();
+                        } else {
+                            echo "Anda belum pernah mengajukan pengajuan.";
+                        }
+                    ?>
+                    </div>
+                </div>
+                <div class='card'>
+                    <div class='card-header'>
+                        <h2>Pengajuan Anda yang Sedang Diproses:</h2>
+                    </div>
+                    <div class='card-body'>
+                    <?php
+                        $sts1 = "Dalam Proses";
+                        $sts2 = "Sudah Di Anggarkan";
+                        $sts3 = "Sudah di Verifikasi";
+                        // Fetch data from the database
+                        $queryDiProses = "SELECT t.TransaksiID, p.PembebananID, t.TanggalPengajuan, t.NomorStJenisKeg, t.catatan, t.status 
+                        FROM transaksi t
+                        JOIN pembebanan p ON t.TransaksiID = p.TransaksiID
+                        WHERE UserID = ? AND (status = ? OR status = ? OR status = ?)";
+                        $stmtPros = $con->prepare($queryDiProses);
+                        $stmtPros->bind_param("isss", $userId, $sts1, $sts2, $sts3);
+                        $stmtPros->execute();
+                        $stmtPros->bind_result($TransaksiID, $PembebananID, $TanggalPengajuan, $NomorStJenisKeg, $catatan, $status);
+
+                        if ($stmtPros->fetch()) {
+                            echo '<table>
+                                <tr>
+                                    <th>Nomor</th>
+                                    <th>Transaction ID</th>
+                                    <th>Tanggal Pengajuan</th>
+                                    <th>Nomor ST / Jenis Kegunaan</th>
+                                    <th>Catatan</th>
+                                    <th>Status</th>
+                                </tr>';
+
+                            $counter = 1;
+                            do {
+                                echo '<tr>
+                                    <td>' . $counter . '</td>
+                                    <td>' . $TransaksiID . '</td>
+                                    <td>' . $TanggalPengajuan . '</td>
+                                    <td>' . $NomorStJenisKeg . '</td>
+                                    <td>' . $catatan . '</td>
+                                    <td>' . $status . '</td>
+                                </tr>';
+                                $counter++;
+                            } while ($stmtPros->fetch());
+                            echo '</table>';
+                            echo "Total pengajuan yang sedang diproses: " . $counter - 1 . " pengajuan.";
+                            $stmtPros->close();
+                        } else {
+                            echo "Tidak ada pengajuan dalam Proses";
+                        }
+                    ?> 
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

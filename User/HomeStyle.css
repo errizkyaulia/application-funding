@@ -395,6 +395,22 @@ h1, .h1 {
     background-color: rgba(236, 238, 239, 0.3);
 }
 
+.container {
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+}
+
+table {
+    margin: 20px; /* Add space around the table */
+    border-collapse: collapse;
+    width: calc(100% - 40px); /* Subtract twice the margin value from 100% width */
+    display: table;
+}
+
 @media (min-width: 992px) {
     .dashboard-app {
         margin-left: 238px;

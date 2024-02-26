@@ -34,11 +34,12 @@
     // Check if the form is submitted
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Check if the form is submitted
+        $selectedTransactionID = $_GET['TransactionID'];
         if (isset($_POST['update'])) {
             // Check if data already exists
             $checkQuery = "SELECT COUNT(*) FROM pembebanan WHERE TransaksiID = ? AND AdminID = ?";
             $stmtCheck = $con->prepare($checkQuery);
-            $stmtCheck->bind_param("ii", $TransaksiID, $AdminID);
+            $stmtCheck->bind_param("ii", $selectedTransactionID, $AdminID);
             $stmtCheck->execute();
             $stmtCheck->bind_result($count);
             $stmtCheck->fetch();
@@ -74,7 +75,7 @@
                     // Insert new data
                     $insertQuery = "INSERT INTO pembebanan (PembebananID, TransaksiID, AdminID, Bisma, SumberDana, Akun, Detail, Anggaran, Realisasi, TotalRealisasi, Saldo, TanggalSelesaiPembebanan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                     $stmtInsert = $con->prepare($insertQuery);
-                    $stmtInsert->bind_param("siisssssddds", $_POST['PembebananID'], $TransaksiID, $AdminID, $_POST['Bisma'], $_POST['SumberDana'], $_POST['Akun'], $_POST['Detail'], $_POST['Anggaran'], $_POST['Realisasi'], $_POST['TotalRealisasi'], $_POST['Saldo'], $_POST['TanggalSelesaiPembebanan']);
+                    $stmtInsert->bind_param("siisssssddds", $_POST['PembebananID'], $selectedTransactionID, $AdminID, $_POST['Bisma'], $_POST['SumberDana'], $_POST['Akun'], $_POST['Detail'], $_POST['Anggaran'], $_POST['Realisasi'], $_POST['TotalRealisasi'], $_POST['Saldo'], $_POST['TanggalSelesaiPembebanan']);
 
                     if ($stmtInsert->execute()) {
                         echo '<h1>Data inserted successfully!</h1>';
@@ -86,7 +87,7 @@
                     // Update the status of the transaction
                     $UpdatePembebananStatus = "UPDATE transaksi Set status='Sudah Di Anggarkan' WHERE TransaksiID=?";
                     $stmtUpdatePembebananStatus = $con->prepare($UpdatePembebananStatus);
-                    $stmtUpdatePembebananStatus->bind_param("i", $TransaksiID);
+                    $stmtUpdatePembebananStatus->bind_param("i", $selectedTransactionID);
                     $stmtUpdatePembebananStatus->execute();
                     $stmtUpdatePembebananStatus->close();
                 }
@@ -200,7 +201,7 @@
             }
         }
         echo '</table>';
-        echo '<button type="update">Update</button>';
+        echo '<button type="submit" name="update">Update</button>';
         echo '</form>';
         $stmtPembebanan->close();
         echo '</div>';

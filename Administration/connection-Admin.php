@@ -14,6 +14,4 @@ date_default_timezone_set('Asia/Jakarta');
 if ($con->connect_error) {
     die("Connection failed: " . $con->connect_error);
 }
-
-//echo "Admin ID: ";
 ?>

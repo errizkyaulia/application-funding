@@ -53,20 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 ?>
 
 <div class="Menu">
-    <h1>Isi Data ini dengan Benar</h1>
     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
-        <label for="fullName">Full Name:</label>
-        <input type="text" id="fullName" name="fullName" required><br><br>
-
-        <label for="gender">Gender:</label>
-        <select id="gender" name="gender" required>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-        </select><br><br>
-
-        <label for="bidang">Bidang Anda:</label>
-        <input type="text" id="bidang" name="bidang" required><br><br>
-
         <div class="form-group">
             <h1>Pilih Metode recovery</h1>
             <label for="phoneNumber">Phone Number:</label>
@@ -74,9 +61,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required><br><br>
-
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required><br><br>
         </div>
 
         <input type="submit" name="submit" value="Send Request">
@@ -92,7 +76,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     ?>
 
     <div class="Login">
-        <p>Still Remember Your Accout? Back To <a href="Logout.php" class="login-button">Login</a></p>
+        <p>Still Remember Your Accout?</p>
+        <a href="Logout.php" class="login-button">Back to Login</a>
     </div>
 </div>
 
