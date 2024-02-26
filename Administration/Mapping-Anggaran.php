@@ -110,6 +110,7 @@
         $stmt->execute();
         $stmt->bind_result($TransaksiID, $userId, $TanggalPengajuan, $NomorStJenisKeg, $catatan, $status, $fullName, $email, $phoneNumber, $bidang, $PIC);
 
+        echo '<div class="container">';
         echo '<div class="Transaction-List">';
         // Display the transaction data in a table
         echo '<table border="1">
@@ -148,8 +149,12 @@
         }
         $stmt->close();
         echo '</div>';
+        echo '</div>';
 
+        echo '<div class="container">';
         echo '<div class="form-container">';
+        echo '<h1>Form Mapping Anggaran</h1>';
+        echo '<h2>Signature by: '. $_SESSION['AdminName'] .'</h2>';
         // Fetch data from the 'pembebanan' table
         $queryPembebanan = "SELECT PembebananID, Bisma, SumberDana, Akun, Detail, Anggaran, Realisasi, TotalRealisasi, Saldo, TanggalSelesaiPembebanan FROM pembebanan WHERE TransaksiID = ?";
         $stmtPembebanan = $con->prepare($queryPembebanan);
@@ -195,9 +200,10 @@
             }
         }
         echo '</table>';
-        echo '<input type="submit" name="update" value="Update">';
+        echo '<button type="update">Update</button>';
         echo '</form>';
         $stmtPembebanan->close();
+        echo '</div>';
         echo '</div>';
 
         echo '<div class="Back-Home">
@@ -207,7 +213,7 @@
         // Display the search form
         echo '<div class="container">';
         echo '<h1>Kolom Pencarian</h1>';
-        echo '<form method="" action="" onsubmit="window.location.href = \'SPM.php?TransactionID=\' + encodeURIComponent(document.getElementById(\'TransaksiID\').value); return false;">
+        echo '<form method="" action="" onsubmit="window.location.href = \'Mapping-Anggaran.php?TransactionID=\' + encodeURIComponent(document.getElementById(\'TransaksiID\').value); return false;">
             <label for="TransaksiID">Search by Transaksi ID:</label>
             <input type="text" name="TransaksiID" id="TransaksiID">
             <button type="submit">Search</button>
@@ -243,7 +249,7 @@
                     <th>Nomor ST / Jenis Kegunaan</th>
                     <th>Catatan</th>
                     <th>Status</th>
-                    <th>Action</th> <!-- New column for buttons -->
+                    <th>Action</th>
                 </tr>';
 
         // Fetch and display each row of data

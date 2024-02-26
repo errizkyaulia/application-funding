@@ -275,7 +275,7 @@
                 }
             }
             echo '</table>';
-            echo '<input type="submit" name="update" value="Update">';
+            echo '<button type="update">Update</button>';
             echo '</form>';
             $stmtSPM->close();
             echo '</div>';

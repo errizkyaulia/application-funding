@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Editor</title>
-    <link href="styleUser.css" rel="stylesheet" type="text/css">
     <?php
     require_once 'connection-User.php';
     require_once 'authenticate.php';
@@ -66,30 +65,6 @@
     ?>
 </head>
 <body>
-    <!-- Navigation menu main goes here -->
-    <nav>
-        <ul class="nav-list">
-            <li>
-                <a href="Home.php">Home</a>
-            </li>
-            <li>
-                <a href="Pengajuan.php">Pengajuan</a>
-            </li>
-            <li>
-                <a href="Tracking.php">Lacak Pengajuan</a>
-            </li>
-            <li>
-                <a href="History.php">History</a>
-            </li>
-            <li class="active">
-                <a href="Profile.php" aria-current="page">Profile</a>
-            </li>
-            <li>
-                <a href="../Logout.php">Logout</a>
-            </li>
-        </ul>
-    </nav>
-
     <div class="form-container">
         <h1>Profile Editor</h1>
         <form method="POST" action="<?php echo $_SERVER["PHP_SELF"]; ?>" enctype="multipart/form-data">

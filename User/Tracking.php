@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lacak Pengajuan</title>
-    <link href="styleUser.css" rel="stylesheet" type="text/css">
     <?php
     require_once 'connection-User.php';
     require_once 'authenticate.php';
@@ -23,29 +22,7 @@
     ?>
 </head>
 <body>
-    <!-- Navigation menu main goes here -->
-    <nav>
-        <ul class="nav-list">
-            <li>
-                <a href="Home.php">Home</a>
-            </li>
-            <li>
-                <a href="Pengajuan.php">Pengajuan</a>
-            </li>
-            <li class="active">
-                <a href="Tracking.php" aria-current="page">Lacak Pengajuan</a>
-            </li>
-            <li>
-                <a href="History.php">History</a>
-            </li>
-            <li>
-                <a href="Profile.php">Profile</a>
-            </li>
-            <li>
-                <a href="../Logout.php">Logout</a>
-            </li>
-        </ul>
-    </nav>
+    <div class="container">
     <h1>Silahkan masukkan Nomor Transaksi Anda, <?php echo $fullName; ?></h1>
 
     <form method="POST" action="">
@@ -139,6 +116,7 @@
         }
     }
     ?>
+    </div>
     <div class="Back-Home">
         <p>Back to <a href="Home.php" class="Back-button">Home</a></p>
     </div>

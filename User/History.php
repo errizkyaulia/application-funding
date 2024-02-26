@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transaction History</title>
-    <link href="styleUser.css" rel="stylesheet" type="text/css">
     <?php
     require_once 'connection-User.php';
     require_once 'authenticate.php';
@@ -23,29 +22,7 @@
     ?>
 </head>
 <body>
-    <!-- Navigation menu main goes here -->
-    <nav>
-        <ul class="nav-list">
-            <li>
-                <a href="Home.php">Home</a>
-            </li>
-            <li>
-                <a href="Pengajuan.php">Pengajuan</a>
-            </li>
-            <li>
-                <a href="Tracking.php">Lacak Pengajuan</a>
-            </li>
-            <li class="active">
-                <a href="History.php" aria-current="page">History</a>
-            </li>
-            <li>
-                <a href="Profile.php">Profile</a>
-            </li>
-            <li>
-                <a href="../Logout.php">Logout</a>
-            </li>
-        </ul>
-    </nav>
+    <div class="container">
     <h1>Transaction History <?php echo $fullName; ?></h1>
 
     <form method="POST" action="">
@@ -121,6 +98,8 @@
         }
     }
     ?>
+    </div>
+    <div class="container">
     <div class="Transaction-Data">
         <h2>Here is All of Yours Transaction Data</h2>
         <?php
@@ -161,6 +140,7 @@
         echo '</table>';
         $stmt->close();
         ?>
+    </div>
     </div>
 
     <div class="Back-Home">

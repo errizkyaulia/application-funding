@@ -200,7 +200,7 @@
                 <td><input type="text" name="UpdateStatusSPJ" value="' . $UpdateStatusSPJ . '"></td>
             </tr>';
         echo '</table>';
-        echo '<input type="submit" name="update" value="Update">';
+        echo '<button type="update">Update</button>';
         echo '</form>';
         $stmtVerifikator->close();
         echo '</div>';
