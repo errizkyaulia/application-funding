@@ -19,10 +19,11 @@
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Check if the form is submitted
         if (isset($_POST['update'])) {
+            $SelectedTransaksiID = $_GET['TransactionID'];
             // Check if data already exists
             $checkQuery = "SELECT COUNT(*) FROM verification WHERE TransaksiID = ?";
             $stmtCheck = $con->prepare($checkQuery);
-            $stmtCheck->bind_param("i", $TransaksiID);
+            $stmtCheck->bind_param("i", $SelectedTransaksiID);
             $stmtCheck->execute();
             $stmtCheck->bind_result($count);
             $stmtCheck->fetch();
@@ -32,7 +33,7 @@
                 // Update the existing data
                 $updateQuery = "UPDATE verification SET VerificationID=? AdminID=? TanggalSelesaiVerifikasi=?, TanggalSelesaiTTD=?, CatatanVerifikasi=?, UpdateStatusSPJ=? WHERE TransaksiID=?";
                 $stmtUpdate = $con->prepare($updateQuery);
-                $stmtUpdate->bind_param("sissssi", $VerificationID, $AdminID, $_POST['TanggalSelesaiVerifikasi'], $_POST['TanggalSelesaiTTD'], $_POST['CatatanVerifikasi'], $_POST['UpdateStatusSPJ'], $TransaksiID);
+                $stmtUpdate->bind_param("sissssi", $_SESSION['VerificationID'], $AdminID, $_POST['TanggalSelesaiVerifikasi'], $_POST['TanggalSelesaiTTD'], $_POST['CatatanVerifikasi'], $_POST['UpdateStatusSPJ'], $SelectedTransaksiID);
 
                 if ($stmtUpdate->execute()) {
                     echo '<h1>Data updated successfully!</h1>';
@@ -47,13 +48,13 @@
                 // Insert new data
                 $insertQuery = "INSERT INTO verification (VerificationID, PembebananID, TransaksiID, AdminID, TanggalSelesaiVerifikasi, TanggalSelesaiTTD, CatatanVerifikasi, UpdateStatusSPJ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmtInsert = $con->prepare($insertQuery);
-                $stmtInsert->bind_param("ssiissss", $VerificationID, $PembebananID, $TransaksiID, $AdminID, $_POST['TanggalSelesaiVerifikasi'], $_POST['TanggalSelesaiTTD'], $_POST['CatatanVerifikasi'], $_POST['UpdateStatusSPJ']);
+                $stmtInsert->bind_param("ssiissss", $_SESSION['VerificationID'], $_SESSION['PembebananID'], $SelectedTransaksiID, $AdminID, $_POST['TanggalSelesaiVerifikasi'], $_POST['TanggalSelesaiTTD'], $_POST['CatatanVerifikasi'], $_POST['UpdateStatusSPJ']);
 
                 if ($stmtInsert->execute()) {
                     echo '<h1>Data inserted successfully!</h1>';
                     $statusUpdateQuery = "UPDATE transaksi SET status='Sudah Di Verifikasi' WHERE TransaksiID=?";
                     $stmtStatusUpdate = $con->prepare($statusUpdateQuery);
-                    $stmtStatusUpdate->bind_param("i", $TransaksiID);
+                    $stmtStatusUpdate->bind_param("i", $SelectedTransaksiID);
                     $stmtStatusUpdate->execute();
                     $stmtStatusUpdate->close();
                     // You may redirect or perform any other action after the insert
@@ -145,7 +146,9 @@
         echo '</div>';
         // Setting VerificationID
         $VerificationID = $PembebananID . '/' . $AdminID;
-
+        // Save verificationID on session
+        $_SESSION['VerificationID'] = $VerificationID;
+        $_SESSION['PembebananID'] = $PembebananID;
         echo '<div class="form-container">';
         echo '<div class="container">';
         // Fetch data from the 'verification' table
@@ -200,7 +203,7 @@
                 <td><input type="text" name="UpdateStatusSPJ" value="' . $UpdateStatusSPJ . '"></td>
             </tr>';
         echo '</table>';
-        echo '<button type="update">Update</button>';
+        echo '<button type="submit" name="update">Update</button>';
         echo '</form>';
         $stmtVerifikator->close();
         echo '</div>';

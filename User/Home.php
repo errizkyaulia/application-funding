@@ -119,32 +119,33 @@
             </div>
             <div class='container'>
                 <div class='card'>
+                    <?php
+                    // Fetch data from the database
+                    $query = "SELECT TransaksiID, TanggalPengajuan, NomorStJenisKeg, catatan, status 
+                    FROM transaksi
+                    WHERE UserID = ?
+                    ORDER BY TanggalPengajuan DESC
+                    LIMIT 1";
+                    $stmt = $con->prepare($query);
+                    $stmt->bind_param("i", $userId);
+                    $stmt->execute();
+                    $stmt->bind_result($TransaksiID, $TanggalPengajuan, $NomorStJenisKeg, $catatan, $status);
+                    $stmt->fetch();
+                    // Display the latest transaction data
+                    if (!empty($status)) {
+                        $StatusMessage = $status;
+                        $stmt->close();
+                    } else {
+                        $StatusMessage = "Anda belum pernah mengajukan pengajuan.";
+                    }
+                    ?>
                     <div class='card-header'>
-                        <h2>Status Pengajuan Terakhir Anda:</h2>
+                        <h2>Status Pengajuan Terakhir Anda: </h2>
                     </div>
                     <div class='card-body'>
-                    <?php
-                        // Fetch data from the database
-                        $query = "SELECT TransaksiID, TanggalPengajuan, NomorStJenisKeg, catatan, status 
-                        FROM transaksi
-                        WHERE UserID = ?
-                        ORDER BY TanggalPengajuan DESC
-                        LIMIT 1";
-                        $stmt = $con->prepare($query);
-                        $stmt->bind_param("i", $userId);
-                        $stmt->execute();
-                        $stmt->bind_result($TransaksiID, $TanggalPengajuan, $NomorStJenisKeg, $catatan, $status);
-                        $stmt->fetch();
-                        // Display the latest transaction data
-                        if (!empty($status)) {
-                            echo "ID: " . $TransaksiID;
-                            echo '<br>';
-                            echo "Status: " . $status;
-                            $stmt->close();
-                        } else {
-                            echo "Anda belum pernah mengajukan pengajuan.";
-                        }
-                    ?>
+                    <p><?php
+                        echo $StatusMessage
+                    ?></p>
                     </div>
                 </div>
                 <div class='card'>
