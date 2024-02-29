@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <title>Login</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
-    <link href="style.css" rel="stylesheet" type="text/css">
+    <link href="https://er-apps.alwaysdata.net/style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
     <?php
     
-	require_once 'connection.php';
+    require_once 'connection.php';
 
     // Session counter for login attempts
     if (!isset($_SESSION['login_attempts'])) {
@@ -18,11 +18,11 @@
     }
 
     // Display error message if set
-	if (isset($_SESSION['error_message'])) {
-		$message = $_SESSION['error_message'];
-		echo "<script>alert('$message');</script>";
-		unset($_SESSION['error_message']); // Clear the error message after displaying
-	}
+    if (isset($_SESSION['error_message'])) {
+        $message = $_SESSION['error_message'];
+        echo "<script>alert('$message');</script>";
+        unset($_SESSION['error_message']); // Clear the error message after displaying
+    }
     $error_message = "";
 
     // Check if the user has attempted to login more than 3 times
@@ -31,7 +31,7 @@
         if ($login_attempts > 3) {
             // Redirect to forgot-password.php
             $_SESSION['error_message'] = "Your current attempts have exceeded the limit. Please reset your password if you have forgotten it.";
-            header("Location: forgot-password.php");
+            header("Location: https://er-apps.alwaysdata.net/forgot-password.php");
             exit();
         }
     }
@@ -78,10 +78,10 @@
                 
                 if ($user_type === 'user') {
                     $_SESSION['user'] = $userid;
-                    header("Location: User/Home.php");
+                    header("Location: https://er-apps.alwaysdata.net/User/Home.php");
                 } elseif ($user_type === 'admin') {
                     $_SESSION['admin'] = $AdminID;
-                    header("Location: Administration/Admin-Page.php");
+                    header("Location: https://er-apps.alwaysdata.net/Administration/Admin-Page.php");
                 }
                 exit();
             } else {
@@ -94,7 +94,7 @@
     ?>
     <div class="login">
         <h1>Login</h1>
-        <form action="login.php" method="post">
+        <form action="https://er-apps.alwaysdata.net/Login.php" method="post">
             <label for="username_email">
                 <i class="fas fa-user"></i>
             </label>
@@ -115,7 +115,7 @@
                     // Display error message and attempt count
                     if ($count > 3) {
                         $error_message = "Too many attempts. Please try again later
-                        <a href='forgot-password.php' class='forgot-password-button'>Forgot password?</a>";
+                        <a href='https://er-apps.alwaysdata.net/forgot-password.php' class='forgot-password-button'>Forgot password?</a>";
                         $waring_message = "";
                     }
 
@@ -127,9 +127,9 @@
             }
             ?>
         </div>
-	</div>
+    </div>
     <div class="signup">
-        <p>Don't have an account? <a href="SignUp.php" class="signup-button">Sign up</a></p>    
+        <p>Don't have an account? <a href="https://er-apps.alwaysdata.net/SignUp.php" class="signup-button">Sign up</a></p>    
     </div>
 </body>
 </html>

@@ -27,7 +27,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $phoneNumber = mysqli_real_escape_string($con, $_POST['phoneNumber']);
     $email = mysqli_real_escape_string($con, $_POST['email']);
     $username = mysqli_real_escape_string($con, $_POST['username']);
-    $password = mysqli_real_escape_string($con, $_POST['password']);
 
     // Verify the uniqueness of email, phone number, and username
     $verify_query = mysqli_query($con, "SELECT * FROM userdata WHERE email='$email' OR phoneNumber='$phoneNumber' OR username='$username'");
