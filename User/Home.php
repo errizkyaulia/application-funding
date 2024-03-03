@@ -29,7 +29,7 @@
     });
     </script>
     <?php
-    require 'connection-User.php';
+    require '../connection.php';
     require 'authenticate.php';
     // Get user ID from the username
     $userid = $_SESSION['user'];

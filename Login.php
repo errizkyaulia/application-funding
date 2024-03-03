@@ -57,7 +57,37 @@
         if (mysqli_num_rows($result_user) > 0) {
             $user = mysqli_fetch_assoc($result_user);
             $userid = $user['UserID'];
-            $user_type = 'user';
+
+            // Check Account State
+            $accountState = mysqli_query($con, "SELECT AccountState FROM userdata WHERE UserID='$userid'");
+            $accountState = mysqli_fetch_assoc($accountState);
+            $accountState = $accountState['AccountState'];
+
+            if ($accountState == "Pending Activation") {
+                // Show account activation message
+                $_SESSION['error_message'] = "Your account is not activated. Please check your email for the activation link.";
+                header("Location: https://er-apps.alwaysdata.net/Login.php");
+                exit();
+            } elseif ($accountState == "Deactivated") {
+                // Show account deactivation message
+                $_SESSION['error_message'] = "Your account is deactivated. Please contact the administrator.";
+                header("Location: https://er-apps.alwaysdata.net/Login.php");
+                exit();
+            } elseif ($accountState == "Banned") {
+                // Show account banned message
+                $_SESSION['error_message'] = "Your account is banned. Please contact the administrator.";
+                header("Location: https://er-apps.alwaysdata.net/Login.php");
+                exit();
+            } elseif ($accountState == "ACTIVE") {
+                // Authenticate the user
+                $user_type = 'user';
+            } else {
+                // Show account error message
+                $_SESSION['error_message'] = "Your account is not activated. Please check your email for the activation link.";
+                header("Location: https://er-apps.alwaysdata.net/Login.php");
+                exit();
+            }
+
         } elseif (mysqli_num_rows($result_admin) > 0) {
             $admin = mysqli_fetch_assoc($result_admin);
             $AdminID = $admin['AdminID'];
@@ -85,7 +115,8 @@
                 }
                 exit();
             } else {
-                $error_message = "Invalid password";
+                // Failed to authenticate
+                $error_message = "Failed to authenticate. Please check your username/email and password.";
                 //Session adding counter for login attempts
                 $_SESSION['login_attempts']++;
             }

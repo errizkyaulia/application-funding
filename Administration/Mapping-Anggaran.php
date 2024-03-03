@@ -21,7 +21,7 @@
     });
     </script>
     <?php
-    require_once 'connection-Admin.php';
+    require_once '../connection.php';
     require_once "authenticate-Admin.php";
 
     // Check if the Admin is authorized to access this page

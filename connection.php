@@ -1,9 +1,15 @@
 <?php
+// Database Configuration
+include 'Administration/config.php';
+
+// Start the session
 session_start();
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "pembebanan";
+
+// Database Configuration
+$servername = DB_HOST;
+$username = DB_USERNAME;
+$password = DB_PASSWORD;
+$dbname = DB_NAME;
 
 // Create connection
 $con = new mysqli($servername, $username, $password, $dbname);

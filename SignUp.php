@@ -35,10 +35,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         // Insert query to add the user to the database
         // $sqlInsert = ;
-        mysqli_query($con, "INSERT INTO userdata (fullname, gender, phoneNumber, email, username, password) VALUES ('$fullName', '$gender', '$phoneNumber', '$email', '$username', '$hashedPassword')");
+        mysqli_query($con, "INSERT INTO userdata (fullname, gender, phoneNumber, email, username, password, AccountState) VALUES ('$fullName', '$gender', '$phoneNumber', '$email', '$username', '$hashedPassword', 'Pending Activation')");
         // Check if the query was successful
         if (mysqli_affected_rows($con) > 0) {
-            $error_message = "Registration successful. You can now <a href='Login.php'>Login</a>.";
+            $error_message = "Registration successful. Check your email for activation link.";
         } else {
             $error_message = "Error: " . mysqli_error($con);
         }

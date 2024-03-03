@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transaction History</title>
     <?php
-    require_once 'connection-User.php';
+    require_once '../connection.php';
     require_once 'authenticate.php';
     
     // Get user ID from the username

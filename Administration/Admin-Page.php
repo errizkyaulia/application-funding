@@ -8,7 +8,7 @@
 </head>
 <body>
     <?php
-    require "connection-Admin.php";
+    require "../connection.php";
     require "authenticate-Admin.php";
     ?>
     <div class="welcome-container">
