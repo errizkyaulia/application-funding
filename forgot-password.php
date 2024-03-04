@@ -10,6 +10,8 @@
 
 <?php
 require_once 'connection.php';
+require 'Administration/PHPMailer/vendor/autoload.php'; // Include Composer autoloader
+
 // Display error message if set
 if (isset($_SESSION['error_message'])) {
     $message = $_SESSION['error_message'];
@@ -22,31 +24,68 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Handle form submission
 
     // Sanitize and validate form data
-    $fullName = mysqli_real_escape_string($con, $_POST['fullName']);
-    $gender = mysqli_real_escape_string($con, $_POST['gender']);
     $phoneNumber = mysqli_real_escape_string($con, $_POST['phoneNumber']);
     $email = mysqli_real_escape_string($con, $_POST['email']);
-    $username = mysqli_real_escape_string($con, $_POST['username']);
 
     // Verify the uniqueness of email, phone number, and username
-    $verify_query = mysqli_query($con, "SELECT * FROM userdata WHERE email='$email' OR phoneNumber='$phoneNumber' OR username='$username'");
+    $verify_query = mysqli_query($con, "SELECT * FROM userdata WHERE email='$email' OR phoneNumber='$phoneNumber'");
 
-    // Check if the username, email, or phone number already exists
+    // Check if the email or phone number is exists
     if (mysqli_num_rows($verify_query) > 0) {
-        $error_message = "Username, Email, or Phone Number already exists";
-    } else {
-        // Hash the password securely
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        // Generate recovery token
+        $recoveryToken = generateRecoveryToken();
 
-        // Insert query to add the user to the database
-        // $sqlInsert = ;
-        mysqli_query($con, "INSERT INTO userdata (fullname, gender, phoneNumber, email, username, password) VALUES ('$fullName', '$gender', '$phoneNumber', '$email', '$username', '$hashedPassword')");
+        // Update the user record with the recovery token and expiration timestamp
+        $expirationTimestamp = time() + 24 * 60 * 60; // 24 hours
+
+        // Update the user record with the recovery token and expiration timestamp
+        mysqli_query($con, "UPDATE userdata SET verification_token = '$recoveryToken', token_expires_at = '$expirationTimestamp' WHERE email = '$email' OR phoneNumber = '$phoneNumber'");
+
         // Check if the query was successful
         if (mysqli_affected_rows($con) > 0) {
-            $error_message = "Registration successful. You can now <a href='Login.php'>Login</a>.";
+            // Build recovery link
+            $recoveryLink = "https://er-apps.alwaysdata.net/reset-password.php?token=$recoveryToken";
+
+            // Send recovery email
+            sendRecoveryEmail($email, $recoveryLink);
         } else {
             $error_message = "Error: " . mysqli_error($con);
         }
+    } else {
+        // Email or phone number is not exists
+        $error_message = "Email or Phone Number is not exists";
+    }
+}
+// Function to generate a random recovery token
+function generateRecoveryToken() {
+    return bin2hex(random_bytes(32)); // Generates a 64-character hex token
+}
+// Function to send a recovery email
+function sendRecoveryEmail($recipient, $recoveryLink) {
+    // Include your SMTP configuration
+    require 'Administration/config.php';
+
+    $mail = new PHPMailer\PHPMailer\PHPMailer();
+
+    // Configure PHPMailer with your SMTP settings
+    $mail->isSMTP();
+    $mail->Host = SMTP_SERVER;
+    $mail->Port = SMTP_PORT;
+    $mail->SMTPAuth = true;
+    $mail->Username = SMTP_USERNAME;
+    $mail->Password = SMTP_PASSWORD;
+
+    $mail->setFrom(SMTP_USERNAME, 'Admin of er-apps');
+    $mail->addAddress($recipient);
+    $mail->Subject = 'Account Recovery';
+    $mail->Body = "Please click the link below to change your password account: $verificationLink";
+
+    if ($mail->send()) {
+        // Display a success message
+        $error_message = "Email send successful. Check your email for recovery link.";
+    } else {
+        // Error handling for email sending failure
+        $error_message = "Error in Mailing: " . $mail->ErrorInfo;
     }
 }
 ?>

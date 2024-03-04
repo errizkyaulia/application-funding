@@ -10,6 +10,8 @@
 
 <?php
 require_once 'connection.php';
+require 'Administration/PHPMailer/vendor/autoload.php'; // Include Composer autoloader
+
 $error_message = "";
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -33,15 +35,55 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // Hash the password securely
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        // Insert query to add the user to the database
-        // $sqlInsert = ;
-        mysqli_query($con, "INSERT INTO userdata (fullname, gender, phoneNumber, email, username, password, AccountState) VALUES ('$fullName', '$gender', '$phoneNumber', '$email', '$username', '$hashedPassword', 'Pending Activation')");
+        // Generate verification token
+        $verificationToken = generateVerificationToken();
+
+        // Update the user record with the verification token and expiration timestamp
+        $expirationTimestamp = time() + 24 * 60 * 60; // 24 hours
+        mysqli_query($con, "INSERT INTO userdata (fullname, gender, phoneNumber, email, username, password, verification_token, token_expires_at, AccountState) VALUES ('$fullName', '$gender', '$phoneNumber', '$email', '$username', '$hashedPassword', '$verificationToken', '$expirationTimestamp', 'Pending Activation')");
+
         // Check if the query was successful
         if (mysqli_affected_rows($con) > 0) {
-            $error_message = "Registration successful. Check your email for activation link.";
+            // Build verification link
+            $verificationLink = "https://er-apps.alwaysdata.net/verify.php?token=$verificationToken";
+
+            // Send verification email
+            sendVerificationEmail($email, $verificationLink);
         } else {
             $error_message = "Error: " . mysqli_error($con);
         }
+    }
+}
+// Function to generate a random verification token
+function generateVerificationToken() {
+    return bin2hex(random_bytes(32)); // Generates a 64-character hex token
+}
+// Function to send a verification email
+function sendVerificationEmail($recipient, $verificationLink) {
+    // Include your SMTP configuration
+    require 'Administration/config.php';
+
+    $mail = new PHPMailer\PHPMailer\PHPMailer();
+
+    // Configure PHPMailer with your SMTP settings
+    $mail->isSMTP();
+    $mail->Host = SMTP_SERVER;
+    $mail->Port = SMTP_PORT;
+    $mail->SMTPAuth = true;
+    $mail->Username = SMTP_USERNAME;
+    $mail->Password = SMTP_PASSWORD;
+
+    $mail->setFrom(SMTP_USERNAME, 'Admin of er-apps');
+    $mail->addAddress($recipient);
+    $mail->Subject = 'Account Verification';
+    $mail->Body = "Please click the link below to verify your account: $verificationLink";
+
+    if ($mail->send()) {
+        // Display a success message
+        $error_message = "Registration successful. Check your email for activation link.";
+    } else {
+        // Error handling for email sending failure
+        $error_message = "Error in Mailing: " . $mail->ErrorInfo;
     }
 }
 ?>
