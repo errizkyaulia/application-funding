@@ -24,11 +24,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Handle form submission
 
     // Sanitize and validate form data
-    $phoneNumber = mysqli_real_escape_string($con, $_POST['phoneNumber']);
     $email = mysqli_real_escape_string($con, $_POST['email']);
 
     // Verify the uniqueness of email, phone number, and username
-    $verify_query = mysqli_query($con, "SELECT * FROM userdata WHERE email='$email' OR phoneNumber='$phoneNumber'");
+    $verify_query = mysqli_query($con, "SELECT * FROM userdata WHERE email='$email'");
 
     // Check if the email or phone number is exists
     if (mysqli_num_rows($verify_query) > 0) {
@@ -39,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $expirationTimestamp = time() + 24 * 60 * 60; // 24 hours
 
         // Update the user record with the recovery token and expiration timestamp
-        mysqli_query($con, "UPDATE userdata SET verification_token = '$recoveryToken', token_expires_at = '$expirationTimestamp' WHERE email = '$email' OR phoneNumber = '$phoneNumber'");
+        mysqli_query($con, "UPDATE userdata SET verification_token = '$recoveryToken', token_expires_at = '$expirationTimestamp' WHERE email = '$email'");
 
         // Check if the query was successful
         if (mysqli_affected_rows($con) > 0) {
@@ -78,7 +77,7 @@ function sendRecoveryEmail($recipient, $recoveryLink) {
     $mail->setFrom(SMTP_USERNAME, 'Admin of er-apps');
     $mail->addAddress($recipient);
     $mail->Subject = 'Account Recovery';
-    $mail->Body = "Please click the link below to change your password account: $verificationLink";
+    $mail->Body = "Please click the link below to change your password account: $recoveryLink";
 
     if ($mail->send()) {
         // Display a success message
@@ -94,9 +93,6 @@ function sendRecoveryEmail($recipient, $recoveryLink) {
     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
         <div class="form-group">
             <h1>Pilih Metode recovery</h1>
-            <label for="phoneNumber">Phone Number:</label>
-            <input type="tel" id="phoneNumber" name="phoneNumber" pattern="[0-9]+" required><br><br>
-
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required><br><br>
         </div>
