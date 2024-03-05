@@ -4,7 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            color: #333;
+        }
+
+        .Menu {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #cccccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="email"],
+        input[type="password"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: #fff;
+            width: 100%;
+            text-align: center;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .Login {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login-button {
+            color: #008CBA;
+            background-color: transparent;
+            border: green;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
@@ -77,11 +150,36 @@ function sendRecoveryEmail($recipient, $recoveryLink) {
     $mail->setFrom(SMTP_USERNAME, 'Admin of er-apps');
     $mail->addAddress($recipient);
     $mail->Subject = 'Account Recovery';
-    $mail->Body = "Please click the link below to change your password account: $recoveryLink";
+
+    $mail->Body = "
+        <p>Please click the link below to change your account password:</p>
+        <p><a href='$recoveryLink'>$recoveryLink</a></p>
+
+        <br><br>
+
+        <strong>Note:</strong> Do not share this link with others. The link will expire after 24 hours.
+
+        <br><br>
+
+        If you didn't request a password reset, please contact the admin.
+
+        <br><br>
+
+        Regards,<br>
+        Admin of er-apps
+    ";
+
+    // Set the email body as HTML
+    $mail->isHTML(true);
+
 
     if ($mail->send()) {
-        // Display a success message
-        $error_message = "Email send successful. Check your email for recovery link.";
+        // Create a success message
+        $error_message = "Email send successful. Check your email to reset your password.";
+        $_SESSION['error_message'] = $error_message ;
+        header("Location: Login.php");
+        exit();
+        
     } else {
         // Error handling for email sending failure
         $error_message = "Error in Mailing: " . $mail->ErrorInfo;
@@ -114,80 +212,5 @@ function sendRecoveryEmail($recipient, $recoveryLink) {
         <a href="Logout.php" class="login-button">Back to Login</a>
     </div>
 </div>
-
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    h1 {
-        font-size: 24px;
-        text-align: center;
-        color: #333;
-    }
-
-    .Menu {
-        max-width: 400px;
-        margin: 50px auto;
-        padding: 20px;
-        background-color: #cccccc;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    label {
-        display: block;
-        margin-bottom: 10px;
-        color: #555;
-    }
-
-    input[type="text"],
-    input[type="tel"],
-    input[type="email"],
-    input[type="password"],
-    select,
-    textarea {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-        font-size: 14px;
-        margin-bottom: 10px;
-    }
-
-    input[type="submit"] {
-        background-color: #4CAF50;
-        color: #fff;
-        width: 100%;
-        text-align: center;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    input[type="submit"]:hover {
-        background-color: #45a049;
-    }
-
-    .Login {
-        text-align: center;
-        margin-top: 20px;
-    }
-
-    .login-button {
-        color: #008CBA;
-        background-color: transparent;
-        border: green;
-        border-radius: 4px;
-        text-decoration: none;
-        font-weight: bold;
-    }
-</style>
 </body>
 </html>

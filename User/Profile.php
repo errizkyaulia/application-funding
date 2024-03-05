@@ -59,7 +59,7 @@
         }
 
         // Redirect to the profile page after successful update
-        header("Location: profile.php");
+        header("Location: Profile.php");
         exit;
     }
     ?>

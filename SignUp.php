@@ -76,11 +76,34 @@ function sendVerificationEmail($recipient, $verificationLink) {
     $mail->setFrom(SMTP_USERNAME, 'Admin of er-apps');
     $mail->addAddress($recipient);
     $mail->Subject = 'Account Verification';
-    $mail->Body = "Please click the link below to verify your account: $verificationLink";
+
+    $mail->Body = "
+        <p>Please click the link below to verify your account:</p>
+        <p><a href='$verificationLink'>$verificationLink</a></p>
+
+        <br><br>
+
+        <strong>Note:</strong> Do not share this link with others. The link will expire after 24 hours.
+
+        <br><br>
+
+        If you didn't request an account verification, please contact the admin.
+
+        <br><br>
+
+        Regards,<br>
+        Admin of er-apps
+    ";
+
+    // Set the email body as HTML
+    $mail->isHTML(true);
 
     if ($mail->send()) {
-        // Display a success message
-        $error_message = "Registration successful. Check your email for activation link.";
+        // Create a success message
+        $error_message = "Email send successful. Check your email to reset your password.";
+        $_SESSION['error_message'] = $error_message ;
+        header("Location: Login.php");
+        exit();
     } else {
         // Error handling for email sending failure
         $error_message = "Error in Mailing: " . $mail->ErrorInfo;
