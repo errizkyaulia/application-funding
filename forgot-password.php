@@ -118,8 +118,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // Build recovery link
             $recoveryLink = "https://er-apps.alwaysdata.net/reset-password.php?token=$recoveryToken";
 
+            // set the custom expiration time to readable format
+            $expirationTime = date('Y-m-d H:i:s', $expirationTimestamp);
+
             // Send recovery email
-            sendRecoveryEmail($email, $recoveryLink);
+            sendRecoveryEmail($email, $recoveryLink, $expirationTime);
         } else {
             $error_message = "Error: " . mysqli_error($con);
         }
@@ -133,7 +136,7 @@ function generateRecoveryToken() {
     return bin2hex(random_bytes(32)); // Generates a 64-character hex token
 }
 // Function to send a recovery email
-function sendRecoveryEmail($recipient, $recoveryLink) {
+function sendRecoveryEmail($recipient, $recoveryLink, $expirationTime) {
     // Include your SMTP configuration
     require 'Administration/config.php';
 
@@ -157,7 +160,7 @@ function sendRecoveryEmail($recipient, $recoveryLink) {
 
         <br><br>
 
-        <strong>Note:</strong> Do not share this link with others. The link will expire after 24 hours.
+        <strong>Note:</strong> Do not share this link with others. The link will expire at $expirationTime..
 
         <br><br>
 
@@ -177,6 +180,7 @@ function sendRecoveryEmail($recipient, $recoveryLink) {
         // Create a success message
         $error_message = "Email send successful. Check your email to reset your password.";
         $_SESSION['error_message'] = $error_message ;
+        $_SESSION['login_attempts'] = 0; // Reset the login attempt
         header("Location: Login.php");
         exit();
         

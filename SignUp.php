@@ -47,8 +47,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // Build verification link
             $verificationLink = "https://er-apps.alwaysdata.net/verify.php?token=$verificationToken";
 
-            // Send verification email
-            sendVerificationEmail($email, $verificationLink);
+            // set the custom expiration time to readable format
+            $expirationTime = date('Y-m-d H:i:s', $expirationTimestamp);
+            
+            // Send verification email and expire link in custom time
+            sendVerificationEmail($email, $verificationLink, $expirationTime);
         } else {
             $error_message = "Error: " . mysqli_error($con);
         }
@@ -59,7 +62,7 @@ function generateVerificationToken() {
     return bin2hex(random_bytes(32)); // Generates a 64-character hex token
 }
 // Function to send a verification email
-function sendVerificationEmail($recipient, $verificationLink) {
+function sendVerificationEmail($recipient, $verificationLink, $expirationTime) {
     // Include your SMTP configuration
     require 'Administration/config.php';
 
@@ -83,11 +86,11 @@ function sendVerificationEmail($recipient, $verificationLink) {
 
         <br><br>
 
-        <strong>Note:</strong> Do not share this link with others. The link will expire after 24 hours.
+        <strong>Note:</strong> Do not share this link with others. The link will expire at $expirationTime.
 
         <br><br>
 
-        If you didn't request an account verification, please contact the admin.
+        If you didn't request to create an account, please ignore this verification message.
 
         <br><br>
 
