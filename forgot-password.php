@@ -116,7 +116,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // Check if the query was successful
         if (mysqli_affected_rows($con) > 0) {
             // Build recovery link
-            $recoveryLink = "https://er-apps.alwaysdata.net/reset-password.php?token=$recoveryToken";
+            $recoveryLink = BASE_URL . "reset-password.php?token=$recoveryToken";
 
             // set the custom expiration time to readable format
             $expirationTime = date('Y-m-d H:i:s', $expirationTimestamp);

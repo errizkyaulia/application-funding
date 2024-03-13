@@ -14,7 +14,13 @@ if ($verificationToken) {
         mysqli_query($con, "UPDATE userdata SET AccountState = 'ACTIVE', verification_token = NULL WHERE verification_token = '$verificationToken'");
         
         // Display a success message
-        echo "Account successfully activated. You can now log in.";
+        $error_message = "Account successfully activated. You can now log in.";
+
+        // Set the success message in a session
+        $_SESSION['error_message'] = $error_message;
+        // Redirect to the login page
+        header('Location: Login.php');
+        exit();
     } else {
         // Token is invalid, expired, or both
         echo "Invalid or expired verification token. Please check your email or contact support.";

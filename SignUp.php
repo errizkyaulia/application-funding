@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // Check if the query was successful
         if (mysqli_affected_rows($con) > 0) {
             // Build verification link
-            $verificationLink = "https://er-apps.alwaysdata.net/verify.php?token=$verificationToken";
+            $verificationLink = BASE_URL . "verify.php?token=$verificationToken";
 
             // set the custom expiration time to readable format
             $expirationTime = date('Y-m-d H:i:s', $expirationTimestamp);
