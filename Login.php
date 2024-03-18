@@ -8,9 +8,51 @@
 </head>
 <body>
     <?php
-    
     // Start the session
-    require_once 'connection.php';
+    require 'connection.php';
+    require 'function.php';
+
+    // Rate limit settings
+    $max_attempts = 3;
+    $lockout_time = 300; // seconds
+
+    // Set 0 and 1
+    $zero = 0;
+    $one = 1;
+
+    // Check IP Address on Database
+    $ip = getClientIp();
+    $stmt = mysqli_prepare($con, "SELECT id_attempts, attempts, last_attempt_time, result FROM login_attempts WHERE ip_address = ? AND result = ? LIMIT 1");
+    mysqli_stmt_bind_param($stmt, "si", $ip, $zero);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_store_result($stmt);
+
+    // Check if the IP address is already in the database
+    if (mysqli_stmt_num_rows($stmt) > 0) {
+        mysqli_stmt_bind_result($stmt, $id_attempts, $attempts, $last_attempt_time, $result);
+        mysqli_stmt_fetch($stmt);
+
+        // Set id_attempts in the local session
+        $local_session_id_attempts = $id_attempts;
+
+        // Update the last attempt count and time
+        $_SESSION['login_attempts'] = $attempts;
+        $local_session_last_login_attempt_time = $last_attempt_time;
+
+        // Calculate the elapsed time since the last attempt
+        $elapsed_time = time() - $last_attempt_time;
+
+        // Check if the lockout time has expired
+        if ($elapsed_time < $lockout_time && $attempts >= $max_attempts) {
+            $remaining_time = $lockout_time - $elapsed_time;
+
+            // Display error message on the login page
+            $error_message = "You cannot log in for " . floor($remaining_time / 60) . " minutes and " . $remaining_time % 60 . " seconds. Please try again later.";
+            $_SESSION['error_message'] = $error_message;
+            header("Location: " . BASE_URL . "Login.php");
+            exit();
+        }
+    }
 
     // Session counter for login attempts
     if (!isset($_SESSION['login_attempts'])) {
@@ -97,6 +139,20 @@
             $error_message = "Invalid username or email";
             //Session adding counter for login attempts
             $_SESSION['login_attempts']++;
+
+            // Log the failed login attempt into the database
+            if (mysqli_stmt_num_rows($stmt) > 0) {
+                // Update the login attempt
+                $attempts = $attempts + 1;
+                $stmt_update = mysqli_prepare($con, "UPDATE login_attempts SET attempts = ?, last_attempt_time = ?, result = ? WHERE id_attempts = ?");
+                mysqli_stmt_bind_param($stmt_update, "iiii", $attempts, time(), $local_session_id_attempts, $zero);
+                mysqli_stmt_execute($stmt_update);
+            } else {
+                // Insert the login attempt
+                $stmt_insert = mysqli_prepare($con, "INSERT INTO login_attempts (ip_address, attempts, last_attempt_time, result) VALUES (?, ?, ?, ?)");
+                mysqli_stmt_bind_param($stmt_insert, "siii", $ip, $attempts, time(), $zero);
+                mysqli_stmt_execute($stmt_insert);
+            }
         }
     
         // Authenticate the user based on the determined type
@@ -106,17 +162,48 @@
             if ($auth_result) {
                 // Set session based on user type
                 $_SESSION['user_type'] = $user_type;
+                // Log the successfull login attempt into the database
+                if (mysqli_stmt_num_rows($stmt) > 0) {
+                    // Update the login attempt
+                    $attempts = $attempts + 1;
+                    $stmt_update = mysqli_prepare($con, "UPDATE login_attempts SET attempts = ?, last_attempt_time = ?, result = ? WHERE id_attempts = ?");
+                    mysqli_stmt_bind_param($stmt_update, "iiii", $attempts, time(), $local_session_id_attempts, $one);
+                    mysqli_stmt_execute($stmt_update);
+                } else {
+                    // Insert the login attempt
+                    $stmt_insert = mysqli_prepare($con, "INSERT INTO login_attempts (ip_address, attempts, last_attempt_time, result) VALUES (?, ?, ?, ?)");
+                    mysqli_stmt_bind_param($stmt_insert, "siii", $ip, $attempts, time(), $one);
+                    mysqli_stmt_execute($stmt_insert);
+                }
                 
+                // Assign the session based on the user type
                 if ($user_type === 'user') {
                     $_SESSION['user'] = $userid;
+                    $AdminID = 0;
+                    loginRecords($userid, $AdminID, $ip);
                     header("Location: " . BASE_URL . "User/Home.php");
                 } elseif ($user_type === 'admin') {
                     $_SESSION['admin'] = $AdminID;
+                    $userid = 0;
+                    loginRecords($userid, $AdminID, $ip);
                     header("Location: " . BASE_URL . "Administration/Admin-Page.php");
                 }
+                
                 exit();
             } else {
-                // Failed to authenticate
+                // Log Failed to authenticate
+                if (mysqli_stmt_num_rows($stmt) > 0) {
+                    // Update the login attempt
+                    $attempts = $attempts + 1;
+                    $stmt_update = mysqli_prepare($con, "UPDATE login_attempts SET attempts = ?, last_attempt_time = ?, result = ? WHERE id_attempts = ?");
+                    mysqli_stmt_bind_param($stmt_update, "iiii", $attempts, time(), $local_session_id_attempts, $zero);
+                    mysqli_stmt_execute($stmt_update);
+                } else {
+                    // Insert the login attempt
+                    $stmt_insert = mysqli_prepare($con, "INSERT INTO login_attempts (ip_address, attempts, last_attempt_time, result) VALUES (?, ?, ?, ?)");
+                    mysqli_stmt_bind_param($stmt_insert, "siii", $ip, $attempts, time(), $zero);
+                    mysqli_stmt_execute($stmt_insert);
+                }
                 $error_message = "Failed to authenticate. Please check your username/email and password.";
                 //Session adding counter for login attempts
                 $_SESSION['login_attempts']++;
@@ -140,23 +227,6 @@
         <div class="forgot-password">
             <?php
             displayErrorMessage($error_message, $count);
-            function displayErrorMessage($error_message, &$count) {
-                if (!empty($error_message)) {
-                    $count = $_SESSION['login_attempts']; //Counter for login attempts
-
-                    // Display error message and attempt count
-                    if ($count > 3) {
-                        $error_message = "Too many attempts. Please try again later
-                        <a href='" . BASE_URL . "forgot-password.php' class='forgot-password-button'>Forgot password?</a>";
-                        $waring_message = "";
-                    }
-
-                    echo "<div class='login-error-message'>
-                            <p>$error_message</p>
-                            <p>Attempt $count</p>
-                        </div><br>";
-                }
-            }
             ?>
         </div>
     </div>

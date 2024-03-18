@@ -1,76 +1,44 @@
 <?php
-    require_once 'connection.php';
-    require_once 'authenticate.php';
-    
-    // Retrieve user information from the database
-    $userInfo = getUserInfo($userid);
-    $userFullName = getUserFullName($userid);
+// Function to get the client's IP address
+function getClientIp() {
+    $ipaddress = '';
+    if (isset($_SERVER['HTTP_CLIENT_IP']))
+        $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+    else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+        $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    else if(isset($_SERVER['HTTP_X_FORWARDED']))
+        $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+    else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+        $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+    else if(isset($_SERVER['HTTP_FORWARDED']))
+        $ipaddress = $_SERVER['HTTP_FORWARDED'];
+    else if(isset($_SERVER['REMOTE_ADDR']))
+        $ipaddress = $_SERVER['REMOTE_ADDR'];
+    else
+        $ipaddress = 'UNKNOWN';
+    return $ipaddress;
+}
+function displayErrorMessage($error_message, &$count) {
+    if (!empty($error_message)) {
+        $count = $_SESSION['login_attempts']; //Counter for login attempts
 
-    // Function to get user ID from the username
-    function getuserid($username)
-    {
-        global $con;
+        // Display error message and attempt count
+        if ($count > 3) {
+            $error_message = "Too many attempts. Please try again later
+            <a href='" . BASE_URL . "forgot-password.php' class='forgot-password-button'>Forgot password?</a>";
+            $waring_message = "";
+        }
 
-        // Adjust the query based on your database schema
-        $query = "SELECT userid FROM userdata WHERE username = ?";
-
-        $stmt = $con->prepare($query);
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $stmt->bind_result($userid);
-
-        // Fetch user ID
-        $stmt->fetch();
-
-        // Close the statement
-        $stmt->close();
-
-        return $userid;
+        echo "<div class='login-error-message'>
+                <p>$error_message</p>
+                <p>Attempt $count</p>
+            </div><br>";
     }
-
-    // Function to get user information from the database
-    function getUserInfo($userid)
-    {
-        global $con;
-
-        // Adjust the query based on your database schema
-        $query = "SELECT * FROM userdata WHERE userid = ?";
-
-        $stmt = $con->prepare($query);
-        $stmt->bind_param("i", $userid);
-        $stmt->execute();
-
-        // Get result set
-        $result = $stmt->get_result();
-
-        // Fetch user information as an associative array
-        $userInfo = $result->fetch_assoc();
-
-        // Close the statement
-        $stmt->close();
-
-        return $userInfo;
-    }
-
-    // Function to get user full name
-    function getUserFullName($userid)
-    {
-        global $con;
-
-        // Adjust the query based on your database schema
-        $query = "SELECT fullName FROM userdata WHERE userid = ?";
-
-        $stmt = $con->prepare($query);
-        $stmt->bind_param("i", $userid);
-        $stmt->execute();
-        $stmt->bind_result($fullName);
-
-        // Fetch user full name
-        $stmt->fetch();
-
-        // Close the statement
-        $stmt->close();
-
-        return $fullName;
-    }
+}
+function loginRecords($userid, $AdminID, $ip){
+    // Log the login into the login_record database
+    $stmt_login_record = mysqli_prepare($con, "INSERT INTO login_record (UserID, AdminID, ip_address, login_time) VALUES (?, ?, ?, ?)");
+    mysqli_stmt_bind_param($stmt_login_record, "iiss", $userid, $AdminID, $ip, date("Y-m-d H:i:s"));
+    mysqli_stmt_execute($stmt_login_record);
+}
 ?>
