@@ -1,4 +1,11 @@
 <?php
+// Function to get current time on integer in Jakarta timezone
+function getCurrentTime() {
+    date_default_timezone_set('Asia/Jakarta');
+    $time = time();
+    return $time;
+}
+
 // Function to get the client's IP address
 function getClientIp() {
     $ipaddress = '';
@@ -18,6 +25,8 @@ function getClientIp() {
         $ipaddress = 'UNKNOWN';
     return $ipaddress;
 }
+
+// Function to display error message
 function displayErrorMessage($error_message, &$count) {
     if (!empty($error_message)) {
         $count = $_SESSION['login_attempts']; //Counter for login attempts
@@ -35,10 +44,15 @@ function displayErrorMessage($error_message, &$count) {
             </div><br>";
     }
 }
+
+// Function to log the login into the login_record database
 function loginRecords($userid, $AdminID, $ip){
     // Log the login into the login_record database
     $stmt_login_record = mysqli_prepare($con, "INSERT INTO login_record (UserID, AdminID, ip_address, login_time) VALUES (?, ?, ?, ?)");
     mysqli_stmt_bind_param($stmt_login_record, "iiss", $userid, $AdminID, $ip, date("Y-m-d H:i:s"));
     mysqli_stmt_execute($stmt_login_record);
 }
+
+// Function
+
 ?>

@@ -3,15 +3,16 @@
 <head>
     <meta charset="utf-8">
     <title>Login</title>
+    <?php
+    // Start the session
+    require 'connection.php';
+    require 'function.php';
+    ?>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
     <link href="<?php echo BASE_URL; ?>style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
     <?php
-    // Start the session
-    require 'connection.php';
-    require 'function.php';
-
     // Rate limit settings
     $max_attempts = 3;
     $lockout_time = 300; // seconds
@@ -58,6 +59,13 @@
     if (!isset($_SESSION['login_attempts'])) {
         $_SESSION['login_attempts'] = 0;
         
+    }
+
+    // Check attempts counter
+    if (isset($_SESSION['login_attempts'])) {
+        $count = $_SESSION['login_attempts'];
+    } else {
+        $count = 0;
     }
 
     // Display error message if set
@@ -140,17 +148,19 @@
             //Session adding counter for login attempts
             $_SESSION['login_attempts']++;
 
+            // Adding Count for login attempts
+            $count = $count++;
+
             // Log the failed login attempt into the database
             if (mysqli_stmt_num_rows($stmt) > 0) {
                 // Update the login attempt
-                $attempts = $attempts + 1;
                 $stmt_update = mysqli_prepare($con, "UPDATE login_attempts SET attempts = ?, last_attempt_time = ?, result = ? WHERE id_attempts = ?");
-                mysqli_stmt_bind_param($stmt_update, "iiii", $attempts, time(), $local_session_id_attempts, $zero);
+                mysqli_stmt_bind_param($stmt_update, "iiii", $count, time(), $local_session_id_attempts, $zero);
                 mysqli_stmt_execute($stmt_update);
             } else {
                 // Insert the login attempt
                 $stmt_insert = mysqli_prepare($con, "INSERT INTO login_attempts (ip_address, attempts, last_attempt_time, result) VALUES (?, ?, ?, ?)");
-                mysqli_stmt_bind_param($stmt_insert, "siii", $ip, $attempts, time(), $zero);
+                mysqli_stmt_bind_param($stmt_insert, "siii", $ip, $count, time(), $zero);
                 mysqli_stmt_execute($stmt_insert);
             }
         }
@@ -162,17 +172,20 @@
             if ($auth_result) {
                 // Set session based on user type
                 $_SESSION['user_type'] = $user_type;
+
+                // Counter
+                $count = $count + 1;
+
                 // Log the successfull login attempt into the database
                 if (mysqli_stmt_num_rows($stmt) > 0) {
                     // Update the login attempt
-                    $attempts = $attempts + 1;
                     $stmt_update = mysqli_prepare($con, "UPDATE login_attempts SET attempts = ?, last_attempt_time = ?, result = ? WHERE id_attempts = ?");
-                    mysqli_stmt_bind_param($stmt_update, "iiii", $attempts, time(), $local_session_id_attempts, $one);
+                    mysqli_stmt_bind_param($stmt_update, "iiii", $count, time(), $local_session_id_attempts, $one);
                     mysqli_stmt_execute($stmt_update);
                 } else {
                     // Insert the login attempt
                     $stmt_insert = mysqli_prepare($con, "INSERT INTO login_attempts (ip_address, attempts, last_attempt_time, result) VALUES (?, ?, ?, ?)");
-                    mysqli_stmt_bind_param($stmt_insert, "siii", $ip, $attempts, time(), $one);
+                    mysqli_stmt_bind_param($stmt_insert, "siii", $ip, $count, time(), $one);
                     mysqli_stmt_execute($stmt_insert);
                 }
                 
@@ -191,17 +204,20 @@
                 
                 exit();
             } else {
+                // Counter
+                $count = $count + 1;
+                $time = time();
+
                 // Log Failed to authenticate
                 if (mysqli_stmt_num_rows($stmt) > 0) {
                     // Update the login attempt
-                    $attempts = $attempts + 1;
                     $stmt_update = mysqli_prepare($con, "UPDATE login_attempts SET attempts = ?, last_attempt_time = ?, result = ? WHERE id_attempts = ?");
-                    mysqli_stmt_bind_param($stmt_update, "iiii", $attempts, time(), $local_session_id_attempts, $zero);
+                    mysqli_stmt_bind_param($stmt_update, "iiii", $count, $time, $local_session_id_attempts, $zero);
                     mysqli_stmt_execute($stmt_update);
                 } else {
                     // Insert the login attempt
                     $stmt_insert = mysqli_prepare($con, "INSERT INTO login_attempts (ip_address, attempts, last_attempt_time, result) VALUES (?, ?, ?, ?)");
-                    mysqli_stmt_bind_param($stmt_insert, "siii", $ip, $attempts, time(), $zero);
+                    mysqli_stmt_bind_param($stmt_insert, "siii", $ip, $count, $time, $zero);
                     mysqli_stmt_execute($stmt_insert);
                 }
                 $error_message = "Failed to authenticate. Please check your username/email and password.";
