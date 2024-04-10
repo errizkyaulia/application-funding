@@ -23,6 +23,8 @@
 
     // Check IP Address on Database
     $ip = getClientIp();
+
+    // Check if the IP address is already in the database
     $stmt = mysqli_prepare($con, "SELECT id_attempts, attempts, last_attempt_time, result FROM login_attempts WHERE ip_address = ? AND result = ? LIMIT 1");
     mysqli_stmt_bind_param($stmt, "si", $ip, $zero);
     mysqli_stmt_execute($stmt);
